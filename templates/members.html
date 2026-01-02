@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View BIWC Members Directory">
+    <title>Members Directory - BIWC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Baptist International Worship Centre</h1>
+                        <p>BIWC - Kwabenya</p>
+                    </div>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/register">Join Us</a></li>
+                    <li><a href="/members" class="active">Members</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="section-title" style="margin-bottom: 2rem;">
+                <h2 style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem;">
+                    <i class="fas fa-users"></i> Member Directory
+                </h2>
+                <p style="font-size: 1.15rem; color: var(--text-light);">
+                    Meet our vibrant faith community - <strong>{{ members|length }} member(s)</strong> strong and growing
+                </p>
+                <div style="width: 60px; height: 3px; background: var(--gradient-primary); margin: 1rem auto 0;"></div>
+            </div>
+
+            <!-- Filters - Premium Design -->
+            <div class="filters" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <form method="GET" action="/members">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="search" style="font-weight: 600; color: var(--primary-color);"><i class="fas fa-search"></i> Search Member</label>
+                            <input type="text" id="search" name="search" placeholder="Search by name or email..." 
+                                   value="{{ search }}" class="form-control" style="border: 2px solid var(--border-color);">
+                        </div>
+                        <div class="filter-group">
+                            <label for="gender" style="font-weight: 600; color: var(--primary-color);"><i class="fas fa-venus-mars"></i> Filter by Gender</label>
+                            <select id="gender" name="gender" class="form-control" style="border: 2px solid var(--border-color);">
+                                <option value="">All Genders</option>
+                                <option value="Male" {% if gender_filter == 'Male' %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if gender_filter == 'Female' %}selected{% endif %}>Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-buttons" style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary btn-small">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <a href="/members" class="btn btn-secondary btn-small">
+                            <i class="fas fa-redo"></i> Clear
+                        </a>
+                        <a href="/register" class="btn btn-success btn-small">
+                            <i class="fas fa-user-plus"></i> Add Member
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Members Grid (Desktop View - Card Grid) -->
+            {% if members %}
+            <div class="members-grid hide-mobile">
+                {% for member in members %}
+                <div class="member-card slide-up">
+                    <div class="member-card-header">
+                        <div class="member-avatar">
+                            <i class="fas {% if member.gender == 'Female' %}fa-female{% else %}fa-male{% endif %}"></i>
+                        </div>
+                        <h3 style="margin: 0; font-size: 1.2rem;">{{ member.first_name }} {{ member.last_name }}</h3>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; opacity: 0.9;">Member #{{ member.id }}</p>
+                    </div>
+                    <div class="member-card-body">
+                        <div class="member-info">
+                            <i class="fas fa-envelope"></i>
+                            <span title="{{ member.email }}">{{ member.email[:25] }}...</span>
+                        </div>
+                        {% if member.phone %}
+                        <div class="member-info">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ member.phone }}</span>
+                        </div>
+                        {% endif %}
+                        {% if member.city %}
+                        <div class="member-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ member.city }}, {{ member.state }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="member-info">
+                            <i class="fas fa-calendar"></i>
+                            <span>Joined: {{ member.join_date[:10] }}</span>
+                        </div>
+                    </div>
+                    <div class="member-card-footer">
+                        <a href="/member/{{ member.id }}" title="View full details">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Members Table (Mobile View) -->
+            <div class="table-container show-mobile">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                        <tr>
+                            <td><strong>{{ member.first_name }} {{ member.last_name }}</strong></td>
+                            <td>{{ member.email[:20] }}</td>
+                            <td>{{ member.phone if member.phone else 'N/A' }}</td>
+                            <td>{{ member.city if member.city else 'N/A' }}</td>
+                            <td>{{ member.join_date[:10] }}</td>
+                            <td>
+                                <a href="/member/{{ member.id }}" class="btn btn-small btn-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <h3>No Members Found</h3>
+                <p>
+                    {% if search or gender_filter %}
+                        Your search didn't return any results. Try adjusting your filters.
+                    {% else %}
+                        No members have registered yet. Be the first to join our community!
+                    {% endif %}
+                </p>
+                <a href="/register" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Register Now
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Statistics -->
+            {% if members %}
+            <div style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem; margin-top: 2rem; text-align: center;">
+                <h3 style="color: #1a4d7a; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-pie"></i> Directory Statistics
+                </h3>
+                <p style="color: #7f8c8d;">
+                    Total Members: <strong>{{ members|length }}</strong> | 
+                    Directory Last Updated: <strong>Today</strong>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-church"></i> BIWC</h3>
+                    <p>Baptist International Worship Centre - Kwabenya</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Pokuase Street, Accra, Ghana</p>
+                </div>
+                <div class="footer-section">
+                    <h3><i class="fas fa-address-book"></i> Contact</h3>
+                    <p><i class="fas fa-phone"></i> +233 547 265 306</p>
+                    <p><i class="fas fa-envelope"></i> members@biwckwabenya.org</p>
+                </div>
+                <div class="footer-section">
+                    <h3><i class="fas fa-link"></i> Quick Links</h3>
+                    <p><a href="/">Home</a></p>
+                    <p><a href="/register">Join Us</a></p>
+                    <p><a href="/members">Members</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Baptist International Worship Centre (BIWC) - All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

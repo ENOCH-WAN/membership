@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Member Detail - BIWC">
+    <title>Member Profile - BIWC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Baptist International Worship Centre</h1>
+                        <p>BIWC - Kwabenya</p>
+                    </div>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/register">Join Us</a></li>
+                    <li><a href="/members" class="active">Members</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Back Button -->
+            <a href="/members" class="btn btn-secondary" style="margin-bottom: 1.5rem;">
+                <i class="fas fa-arrow-left"></i> Back to Members
+            </a>
+
+            <!-- Member Detail Container -->
+            <div class="detail-container">
+                <!-- Member Header -->
+                <div class="detail-header">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">
+                        <i class="fas {% if member.gender == 'Female' %}fa-female{% else %}fa-male{% endif %}"></i>
+                    </div>
+                    <h1>{{ member.first_name }} {{ member.last_name }}</h1>
+                    <p style="margin-top: 0.5rem; font-size: 1.1rem; opacity: 0.9;">Member ID: #{{ member.id }}</p>
+                </div>
+
+                <!-- Member Details -->
+                <div class="detail-body">
+                    <!-- Personal Information -->
+                    <h3 style="color: #1a4d7a; margin-bottom: 1.5rem; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-user-circle"></i> Personal Information
+                    </h3>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">First Name</div>
+                            <div class="detail-value">{{ member.first_name }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Last Name</div>
+                            <div class="detail-value">{{ member.last_name }}</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">Email Address</div>
+                            <div class="detail-value">
+                                <a href="mailto:{{ member.email }}">{{ member.email }}</a>
+                            </div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Phone Number</div>
+                            <div class="detail-value">
+                                {{ member.phone if member.phone else 'Not provided' }}
+                                {% if member.phone %}
+                                <a href="tel:{{ member.phone }}" style="margin-left: 1rem;">
+                                    <i class="fas fa-phone"></i> Call
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">Date of Birth</div>
+                            <div class="detail-value">{{ member.date_of_birth if member.date_of_birth else 'Not provided' }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Gender</div>
+                            <div class="detail-value">{{ member.gender if member.gender else 'Not specified' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Address -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-home"></i> Address
+                    </h3>
+
+                    <div class="detail-field">
+                        <div class="detail-label">Street Address</div>
+                        <div class="detail-value">{{ member.address if member.address else 'Not provided' }}</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">City</div>
+                            <div class="detail-value">{{ member.city if member.city else 'Not provided' }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Region/State</div>
+                            <div class="detail-value">{{ member.state if member.state else 'Not provided' }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Postal Code</div>
+                            <div class="detail-value">{{ member.postal_code if member.postal_code else 'Not provided' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-info-circle"></i> Additional Information
+                    </h3>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">Marital Status</div>
+                            <div class="detail-value">{{ member.marital_status if member.marital_status else 'Not specified' }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Occupation</div>
+                            <div class="detail-value">{{ member.occupation if member.occupation else 'Not provided' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Spiritual Background -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-cross"></i> Spiritual Background
+                    </h3>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">Spiritual Status</div>
+                            <div class="detail-value">{{ member.spiritual_status if member.spiritual_status else 'Not specified' }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Baptism Date</div>
+                            <div class="detail-value">{{ member.baptism_date if member.baptism_date else 'Not provided' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-field">
+                        <div class="detail-label">Previous Church</div>
+                        <div class="detail-value">{{ member.previous_church if member.previous_church else 'None' }}</div>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-phone-alt"></i> Emergency Contact
+                    </h3>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">Contact Name</div>
+                            <div class="detail-value">{{ member.emergency_contact_name if member.emergency_contact_name else 'Not provided' }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Contact Phone</div>
+                            <div class="detail-value">
+                                {{ member.emergency_contact_phone if member.emergency_contact_phone else 'Not provided' }}
+                                {% if member.emergency_contact_phone %}
+                                <a href="tel:{{ member.emergency_contact_phone }}" style="margin-left: 1rem;">
+                                    <i class="fas fa-phone"></i> Call
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills & Interests -->
+                    {% if member.skills_interests %}
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-gifts"></i> Skills & Interests
+                    </h3>
+
+                    <div class="detail-field">
+                        <div class="detail-value">{{ member.skills_interests }}</div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Membership Information -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-calendar-alt"></i> Membership Information
+                    </h3>
+
+                    <div class="detail-row">
+                        <div class="detail-field">
+                            <div class="detail-label">Join Date</div>
+                            <div class="detail-value">{{ member.join_date[:10] }}</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="detail-label">Membership Status</div>
+                            <div class="detail-value">
+                                <span style="display: inline-block; padding: 0.5rem 1rem; background-color: #d4edda; color: #155724; border-radius: 20px; font-weight: 600;">
+                                    <i class="fas fa-check-circle"></i> {{ member.membership_status if member.membership_status else 'Active' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; padding-top: 2rem; border-top: 2px solid #ecf0f1;">
+                        <a href="/members" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Directory
+                        </a>
+                        <a href="/register" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Add New Member
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-church"></i> BIWC</h3>
+                    <p>Baptist International Worship Centre - Kwabenya</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Pokuase Street, Accra, Ghana</p>
+                </div>
+                <div class="footer-section">
+                    <h3><i class="fas fa-address-book"></i> Contact</h3>
+                    <p><i class="fas fa-phone"></i> +233 547 265 306</p>
+                    <p><i class="fas fa-envelope"></i> members@biwckwabenya.org</p>
+                </div>
+                <div class="footer-section">
+                    <h3><i class="fas fa-link"></i> Quick Links</h3>
+                    <p><a href="/">Home</a></p>
+                    <p><a href="/register">Join Us</a></p>
+                    <p><a href="/members">Members</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Baptist International Worship Centre (BIWC) - All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

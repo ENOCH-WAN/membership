@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Register for BIWC Membership">
+    <title>Membership Registration - BIWC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Baptist International Worship Centre</h1>
+                        <p>BIWC - Kwabenya</p>
+                    </div>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/register" class="active">Join Us</a></li>
+                    <li><a href="/members">Members</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page Header -->
+            <div class="section-title" style="margin-bottom: 2rem;">
+                <h2 style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 0.5rem;">
+                    <i class="fas fa-user-plus"></i> Become a Member
+                </h2>
+                <p style="font-size: 1.15rem; color: var(--text-light); margin-bottom: 1.5rem;">
+                    Join our growing faith community and experience the joy of genuine fellowship
+                </p>
+                <div style="width: 60px; height: 3px; background: var(--gradient-secondary); margin: 0 auto;"></div>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="form-container">
+                <form method="POST" action="/register" onsubmit="return validateForm()">
+                    <!-- Personal Information Section -->
+                    <h3 style="color: #1a4d7a; margin-bottom: 1.5rem; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-user-circle"></i> Personal Information
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="first_name">First Name</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" 
+                                   placeholder="Enter your first name" required>
+                        </div>
+                        <div class="form-group required">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" 
+                                   placeholder="Enter your last name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" class="form-control" 
+                                   placeholder="your.email@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" class="form-control" 
+                                   placeholder="+233 5XX XXX XXX">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="date_of_birth">Date of Birth (Month/Day)</label>
+                            <input type="text" id="date_of_birth" name="date_of_birth" class="form-control" 
+                                   placeholder="MM/DD" required>
+                        </div>
+                        <div class="form-group required">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender" class="form-control" required>
+                                <option value="">-- Select Gender --</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-home"></i> Contact Address
+                    </h3>
+
+                    <div class="form-group required">
+                        <label for="address">Street Address</label>
+                        <input type="text" id="address" name="address" class="form-control" 
+                               placeholder="House number and street name" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city" class="form-control" 
+                                   placeholder="Your city" required>
+                        </div>
+                        <div class="form-group required">
+                            <label for="state">Region/State</label>
+                            <input type="text" id="state" name="state" class="form-control" 
+                                   placeholder="Your region" required>
+                        </div>
+                        <div class="form-group required">
+                            <label for="postal_code">Postal Code</label>
+                            <input type="text" id="postal_code" name="postal_code" class="form-control" 
+                                   placeholder="Postal code" required>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information Section -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-info-circle"></i> Additional Information
+                    </h3>
+
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="marital_status">Marital Status</label>
+                            <select id="marital_status" name="marital_status" class="form-control" required>
+                                <option value="">-- Select Status --</option>
+                                <option value="Single">Single</option>
+                                <option value="Married">Married</option>
+                                <option value="Divorced">Divorced</option>
+                                <option value="Widowed">Widowed</option>
+                                <option value="Separated">Separated</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="occupation">Occupation</label>
+                            <input type="text" id="occupation" name="occupation" class="form-control" 
+                                   placeholder="What do you do for work?">
+                        </div>
+                    </div>
+
+                    <!-- Auxiliary Group Selection Section -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-layer-group"></i> Auxiliary Group Interest
+                    </h3>
+
+                    <div class="form-group">
+                        <label for="auxiliary_group">Select Your Auxiliary Group(s)</label>
+                        <p style="font-size: 0.85rem; color: #7f8c8d; margin-bottom: 1rem;">
+                            Choose one or more groups you'd like to participate in
+                        </p>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="worship" name="auxiliary_group" value="Worship & Music Ministry">
+                                <label for="worship"><i class="fas fa-microphone"></i> Worship & Music Ministry</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="youth" name="auxiliary_group" value="Youth Fellowship">
+                                <label for="youth"><i class="fas fa-users"></i> Youth Fellowship</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="women" name="auxiliary_group" value="Women's Ministry">
+                                <label for="women"><i class="fas fa-heart-hands"></i> Women's Ministry</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="men" name="auxiliary_group" value="Men's Ministry">
+                                <label for="men"><i class="fas fa-handshake"></i> Men's Ministry</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="sunday" name="auxiliary_group" value="Sunday School">
+                                <label for="sunday"><i class="fas fa-book-open"></i> Sunday School</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="prayer" name="auxiliary_group" value="Prayer Warriors">
+                                <label for="prayer"><i class="fas fa-hands-praying"></i> Prayer Warriors</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="media" name="auxiliary_group" value="Media Team">
+                                <label for="media"><i class="fas fa-video"></i> Media Team</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="service" name="auxiliary_group" value="Community Service">
+                                <label for="service"><i class="fas fa-handshake"></i> Community Service</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spiritual Information Section -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-cross"></i> Spiritual Background
+                    </h3>
+
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="spiritual_status">Spiritual Status</label>
+                            <select id="spiritual_status" name="spiritual_status" class="form-control" required>
+                                <option value="">-- Select Status --</option>
+                                <option value="Believer">Believer in Christ</option>
+                                <option value="Baptized">Baptized Member</option>
+                                <option value="Seeking">Seeking God</option>
+                                <option value="Not Sure">Not Sure Yet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="baptism_date">Baptism Date (if applicable)</label>
+                            <input type="date" id="baptism_date" name="baptism_date" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="previous_church">Previous Church (if any)</label>
+                        <input type="text" id="previous_church" name="previous_church" class="form-control" 
+                               placeholder="Name of your previous church community">
+                    </div>
+
+                    <!-- Emergency Contact Section -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-phone-alt"></i> Emergency Contact
+                    </h3>
+
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="emergency_contact_name">Emergency Contact Name</label>
+                            <input type="text" id="emergency_contact_name" name="emergency_contact_name" 
+                                   class="form-control" placeholder="Full name" required>
+                        </div>
+                        <div class="form-group required">
+                            <label for="emergency_contact_phone">Emergency Contact Phone</label>
+                            <input type="tel" id="emergency_contact_phone" name="emergency_contact_phone" 
+                                   class="form-control" placeholder="Phone number" required>
+                        </div>
+                    </div>
+
+                    <!-- Skills & Interests Section -->
+                    <h3 style="color: #1a4d7a; margin: 2rem 0 1.5rem 0; border-bottom: 2px solid #ecf0f1; padding-bottom: 0.5rem;">
+                        <i class="fas fa-gifts"></i> Skills & Interests
+                    </h3>
+
+                    <div class="form-group">
+                        <label for="skills_interests">Tell us about your skills and interests</label>
+                        <textarea id="skills_interests" name="skills_interests" class="form-control" 
+                                  placeholder="e.g., Music, Teaching, Counseling, Administration, Hospitality, etc."></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-check-circle"></i> Complete Registration
+                        </button>
+                        <a href="/" class="btn btn-secondary" style="flex: 1; text-align: center;">
+                            <i class="fas fa-times-circle"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Help Text -->
+                <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 1rem; margin-top: 2rem; color: #0c5460; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> <strong>Note:</strong> Your information is secure and will only be used by BIWC for membership purposes. 
+                    We respect your privacy and will never share your data with third parties.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-church"></i> BIWC</h3>
+                    <p>Baptist International Worship Centre - Kwabenya</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Pokuase Street, Accra, Ghana</p>
+                </div>
+                <div class="footer-section">
+                    <h3><i class="fas fa-address-book"></i> Contact</h3>
+                    <p><i class="fas fa-phone"></i> +233 547 265 306</p>
+                    <p><i class="fas fa-envelope"></i> members@biwckwabenya.org</p>
+                </div>
+                <div class="footer-section">
+                    <h3><i class="fas fa-link"></i> Quick Links</h3>
+                    <p><a href="/">Home</a></p>
+                    <p><a href="/register">Join Us</a></p>
+                    <p><a href="/members">Members</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Baptist International Worship Centre (BIWC) - All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function validateForm() {
+            // Basic client-side validation
+            const email = document.getElementById('email').value;
+            const phoneRegex = /^[\d\s+\-().]*$/;
+            
+            if (!email.includes('@')) {
+                alert('Please enter a valid email address');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Auto-hide flash messages after 5 seconds
+        document.querySelectorAll('.flash').forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => message.remove(), 300);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
