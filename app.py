@@ -26,7 +26,7 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
-                email TEXT UNIQUE NOT NULL,
+                email TEXT UNIQUE,
                 phone TEXT,
                 date_of_birth TEXT,
                 gender TEXT,
@@ -103,12 +103,14 @@ def register():
             conn = get_db_connection()
             cursor = conn.cursor()
             
-            # Validate email doesn't exist
-            cursor.execute('SELECT id FROM members WHERE email = ?', (request.form['email'],))
-            if cursor.fetchone():
-                flash('❌ Email already registered! Please use a different email.', 'error')
-                conn.close()
-                return render_template('register.html')
+            # Validate email doesn't exist (if provided)
+            email = request.form.get('email', '').strip()
+            if email:
+                cursor.execute('SELECT id FROM members WHERE email = ?', (email,))
+                if cursor.fetchone():
+                    flash('❌ Email already registered! Please use a different email.', 'error')
+                    conn.close()
+                    return render_template('register.html')
             
             # Process auxiliary group checkboxes
             auxiliary_group_selections = request.form.getlist('auxiliary_group')
@@ -126,7 +128,7 @@ def register():
             ''', (
                 request.form.get('first_name', '').strip(),
                 request.form.get('last_name', '').strip(),
-                request.form.get('email', '').strip(),
+                email,
                 request.form.get('phone', '').strip(),
                 request.form.get('date_of_birth', ''),
                 request.form.get('gender', ''),
