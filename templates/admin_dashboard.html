@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Dashboard - BIWC">
+    <title>Admin Dashboard - BIWC</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #0f3d6d 0%, #1a5a96 100%);
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .admin-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-controls a, .admin-controls button {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .admin-controls a:hover, .admin-controls button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .admin-controls .btn-logout {
+            background: rgba(220, 53, 69, 0.8);
+            border-color: rgba(220, 53, 69, 1);
+        }
+
+        .admin-controls .btn-logout:hover {
+            background: rgba(220, 53, 69, 1);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .admin-card.stat-card {
+            text-align: center;
+            border-top: 4px solid #28a745;
+        }
+
+        .admin-card.stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .admin-card.stat-card .stat-label {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .admin-card.action-card {
+            border-top: 4px solid #007bff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .admin-card.action-card .icon {
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+
+        .admin-card.action-card p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .admin-card.action-card .btn {
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin: 2rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .members-table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+        }
+
+        .members-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .members-table thead {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .members-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .members-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .members-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .member-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.new {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.member {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-buttons a {
+            padding: 0.4rem 0.8rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .action-buttons a:hover {
+            background: #1a5a96;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        .export-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 2px dashed var(--primary-color);
+        }
+
+        .export-section h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn-export {
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: 2px solid;
+        }
+
+        .btn-export.btn-print {
+            background: #e3f2fd;
+            border-color: #1976d2;
+            color: #1976d2;
+        }
+
+        .btn-export.btn-print:hover {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-export.btn-csv {
+            background: #e8f5e9;
+            border-color: #388e3c;
+            color: #388e3c;
+        }
+
+        .btn-export.btn-csv:hover {
+            background: #388e3c;
+            color: white;
+        }
+
+        .recent-badge {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .recent-badge strong {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .admin-header .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .admin-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .members-table {
+                font-size: 0.8rem;
+            }
+
+            .members-table th, .members-table td {
+                padding: 0.5rem;
+            }
+
+            .export-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Header -->
+    <div class="admin-header">
+        <div class="container">
+            <h1>
+                <i class="fas fa-shield-alt"></i> Admin Dashboard
+            </h1>
+            <div class="admin-controls">
+                <a href="/">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="/members">
+                    <i class="fas fa-users"></i> Members
+                </a>
+                <a href="/admin/manage-admins">
+                    <i class="fas fa-user-shield"></i> Manage Admins
+                </a>
+                <a href="/admin/logout" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for category, message in messages %}
+                            <div class="flash {{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Admin Overview Cards -->
+            <div class="dashboard-grid">
+                <div class="admin-card stat-card">
+                    <i class="fas fa-users" style="font-size: 2rem; color: var(--primary-color);"></i>
+                    <div class="stat-number">{{ total_all }}</div>
+                    <div class="stat-label">Total Members</div>
+                </div>
+                <div class="admin-card stat-card" style="border-top-color: #28a745;">
+                    <i class="fas fa-mars" style="font-size: 2rem; color: #28a745;"></i>
+                    <div class="stat-number">{{ stats.male }}</div>
+                    <div class="stat-label">Male Members</div>
+                </div>
+                <div class="admin-card stat-card" style="border-top-color: #dc3545;">
+                    <i class="fas fa-venus" style="font-size: 2rem; color: #dc3545;"></i>
+                    <div class="stat-number">{{ stats.female }}</div>
+                    <div class="stat-label">Female Members</div>
+                </div>
+                <div class="admin-card stat-card" style="border-top-color: #ffc107;">
+                    <i class="fas fa-user-check" style="font-size: 2rem; color: #ffc107;"></i>
+                    <div class="stat-number">{{ recent_members|length }}</div>
+                    <div class="stat-label">Recent Joins (7 days)</div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="export-section">
+                <h3>
+                    <i class="fas fa-download"></i> Export Members Directory
+                </h3>
+                <p style="color: #666; margin-bottom: 1rem;">
+                    Download or print the complete members directory for offline access and distribution.
+                </p>
+                <div class="export-buttons">
+                    <a href="/admin/print-directory" class="btn-export btn-print" target="_blank">
+                        <i class="fas fa-print"></i> Print Directory
+                    </a>
+                    <a href="/admin/export-csv" class="btn-export btn-csv">
+                        <i class="fas fa-file-csv"></i> Download as CSV
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recently Joined Members -->
+            {% if recent_members %}
+            <div class="recent-badge">
+                <i class="fas fa-info-circle"></i> <strong>Recently Joined:</strong> {{ recent_members|length }} member(s) joined in the last 7 days
+            </div>
+            {% endif %}
+
+            <h2 class="section-title">
+                <i class="fas fa-star"></i> Recently Joined Members (Last 7 Days)
+            </h2>
+
+            {% if recent_members %}
+            <div class="members-table-container">
+                <table class="members-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Join Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in recent_members %}
+                        <tr>
+                            <td class="member-name">
+                                {{ member.first_name }} {{ member.last_name }}
+                                <span class="badge new"><i class="fas fa-star"></i> New</span>
+                            </td>
+                            <td>{{ member.email or 'N/A' }}</td>
+                            <td>{{ member.phone or 'N/A' }}</td>
+                            <td>{{ member.join_date[:10] }}</td>
+                            <td>
+                                <span class="badge member">{{ member.membership_status }}</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="/member/{{ member.id }}">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <i class="fas fa-inbox"></i> No members joined in the last 7 days
+            </div>
+            {% endif %}
+
+            <!-- All Members -->
+            <h2 class="section-title">
+                <i class="fas fa-list"></i> All Members Directory
+            </h2>
+
+            {% if all_members %}
+            <div class="members-table-container">
+                <table class="members-table">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>Join Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in all_members %}
+                        <tr>
+                            <td>#{{ member.id }}</td>
+                            <td class="member-name">
+                                <a href="/member/{{ member.id }}" style="color: var(--primary-color); text-decoration: none;">
+                                    {{ member.first_name }} {{ member.last_name }}
+                                </a>
+                            </td>
+                            <td>{{ member.email or 'N/A' }}</td>
+                            <td>{{ member.phone or 'N/A' }}</td>
+                            <td>{{ member.city or 'N/A' }}</td>
+                            <td>{{ member.join_date[:10] }}</td>
+                            <td>
+                                <span class="badge member">{{ member.membership_status }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <i class="fas fa-inbox"></i> No members found
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Baptist International Worship Centre (BIWC). All rights reserved.</p>
+    </footer>
+</body>
+</html>

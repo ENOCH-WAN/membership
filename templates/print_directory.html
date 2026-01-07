@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members Directory - Print - BIWC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .print-header {
+            text-align: center;
+            border-bottom: 3px solid #0f3d6d;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .print-header h1 {
+            color: #0f3d6d;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .print-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .print-info {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .members-directory {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .member-entry {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            border-radius: 8px;
+            background: #fafafa;
+            page-break-inside: avoid;
+        }
+
+        .member-entry:nth-child(odd) {
+            background: white;
+        }
+
+        .member-entry h3 {
+            color: #0f3d6d;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid #0f3d6d;
+            padding-bottom: 0.5rem;
+        }
+
+        .member-entry p {
+            font-size: 0.9rem;
+            margin: 0.3rem 0;
+            color: #555;
+        }
+
+        .member-label {
+            font-weight: 600;
+            color: #0f3d6d;
+            display: inline-block;
+            width: 100px;
+        }
+
+        .member-id {
+            background: #0f3d6d;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .print-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 3px solid #0f3d6d;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .directory-title {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #0f3d6d;
+            margin: 2rem 0 1rem 0;
+            font-weight: 700;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .print-header {
+                page-break-after: avoid;
+            }
+
+            .members-directory {
+                page-break-inside: avoid;
+            }
+
+            a {
+                color: #0f3d6d;
+                text-decoration: underline;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        @media screen {
+            .print-button-container {
+                text-align: center;
+                margin: 2rem 0;
+            }
+
+            .print-button-container button {
+                padding: 0.75rem 1.5rem;
+                background: #0f3d6d;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 1rem;
+                transition: background 0.3s;
+            }
+
+            .print-button-container button:hover {
+                background: #1a5a96;
+            }
+
+            .back-button-container {
+                text-align: center;
+                margin: 1rem 0 2rem 0;
+            }
+
+            .back-button-container a {
+                padding: 0.75rem 1.5rem;
+                background: #6c757d;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: background 0.3s;
+            }
+
+            .back-button-container a:hover {
+                background: #5a6268;
+            }
+
+            .member-count {
+                text-align: center;
+                margin-bottom: 1rem;
+                color: #666;
+                font-weight: 600;
+            }
+        }
+
+        .divider-section {
+            page-break-before: always;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <div class="back-button-container">
+            <a href="/admin/dashboard">&larr; Back to Dashboard</a>
+        </div>
+        <div class="print-button-container">
+            <button onclick="window.print()">
+                <i class="fas fa-print"></i> Print this Directory
+            </button>
+        </div>
+    </div>
+
+    <!-- Print Header -->
+    <div class="print-header">
+        <h1>Baptist International Worship Centre</h1>
+        <p>BIWC - Kwabenya Members Directory</p>
+    </div>
+
+    <!-- Print Info -->
+    <div class="print-info">
+        <p><strong>Printed on:</strong> {{ now() }} | <strong>Total Members:</strong> {{ members|length }}</p>
+        <p>This is an official members directory for internal use only.</p>
+    </div>
+
+    <!-- Member Count -->
+    <div class="member-count">
+        Total Active Members: <strong>{{ members|length }}</strong>
+    </div>
+
+    <!-- Members Directory -->
+    <div class="members-directory">
+        {% for member in members %}
+        <div class="member-entry">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                <h3>{{ member.first_name }} {{ member.last_name }}</h3>
+                <span class="member-id">#{{ member.id }}</span>
+            </div>
+            
+            {% if member.email %}
+            <p>
+                <span class="member-label">Email:</span>
+                <a href="mailto:{{ member.email }}">{{ member.email }}</a>
+            </p>
+            {% endif %}
+            
+            {% if member.phone %}
+            <p>
+                <span class="member-label">Phone:</span>
+                {{ member.phone }}
+            </p>
+            {% endif %}
+            
+            {% if member.city %}
+            <p>
+                <span class="member-label">City:</span>
+                {{ member.city }}
+                {% if member.state %}
+                    , {{ member.state }}
+                {% endif %}
+            </p>
+            {% endif %}
+            
+            {% if member.gender %}
+            <p>
+                <span class="member-label">Gender:</span>
+                {{ member.gender }}
+            </p>
+            {% endif %}
+            
+            {% if member.date_of_birth %}
+            <p>
+                <span class="member-label">DOB:</span>
+                {{ member.date_of_birth }}
+            </p>
+            {% endif %}
+            
+            {% if member.occupation %}
+            <p>
+                <span class="member-label">Occupation:</span>
+                {{ member.occupation }}
+            </p>
+            {% endif %}
+            
+            {% if member.auxiliary_group %}
+            <p>
+                <span class="member-label">Groups:</span>
+                {{ member.auxiliary_group }}
+            </p>
+            {% endif %}
+            
+            {% if member.join_date %}
+            <p style="font-size: 0.8rem; color: #999; margin-top: 0.5rem; border-top: 1px solid #eee; padding-top: 0.5rem;">
+                Joined: {{ member.join_date[:10] }}
+            </p>
+            {% endif %}
+        </div>
+
+        {% if loop.index % 20 == 0 and not loop.last %}
+        </div>
+        <div class="divider-section">
+            <div class="members-directory">
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Print Footer -->
+    <div class="print-footer">
+        <p>&copy; 2025 Baptist International Worship Centre (BIWC). All rights reserved.</p>
+        <p>This directory is confidential and for authorized use only.</p>
+    </div>
+</body>
+</html>
